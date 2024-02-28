@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .models import *
 from django.contrib.auth import authenticate,login,logout
 import datetime
+from .algo import haversine
 
 # Create your views here.
 def notification():
@@ -130,12 +131,14 @@ def Signup_User(request):
         type = request.POST['type']
         im = request.FILES['image']
         dat = datetime.date.today()
+        lat = request.POST['latitude']
+        long = request.POST['longitude']
         user = User.objects.create_user(email=e, username=u, password=p, first_name=f,last_name=l)
         if type=="customer":
-            Customer.objects.create(user=user,contact=con,address=add,image=im)
+            Customer.objects.create(user=user,contact=con,address=add,image=im, latitude=lat, longitude=long)
         else:
             stat = Status.objects.get(status='pending')
-            Service_Man.objects.create(doj=dat,image=im,user=user,contact=con,address=add,status=stat)
+            Service_Man.objects.create(doj=dat,image=im,user=user,contact=con,address=add,status=stat, latitude=lat, longitude=long)
         error = "create"
     d = {'error':error}
     return render(request,'signup.html',d)
@@ -638,11 +641,12 @@ def service_man_detail(request,pid):
 
 def search_cities(request):
     error=""
+    customer = None
     try:
         user = User.objects.get(id=request.user.id)
         error = ""
         try:
-            sign = Customer.objects.get(user=user)
+            customer = Customer.objects.get(user=user)
             error = "pat"
         except:
             pass
@@ -657,15 +661,23 @@ def search_cities(request):
     c=""
     c1=""
     if request.method=="POST":
-        c=request.POST['city']
         c1 = request.POST['cat']
-        ser = City.objects.get(city=c)
         ser1 = Service_Category.objects.get(category=c1)
-        pro = Service_Man.objects.filter(service_name=ser1,city=ser)
-        for i in pro:
+        pro = Service_Man.objects.filter(service_name=ser1)
+        temp = []
+        for sp in pro:
+            distance = haversine(customer.latitude, customer.longitude, sp.latitude, sp.longitude)
+            obj = {
+                'sp': sp,
+                'distance': round(distance, 2)
+            }
+            temp.append(obj)
             count1+=1
         terror = True
-    d = {'c':c,'c1':c1,'count1':count1,'car1':car1,'car':car,'order':pro,'new': dic['new'], 'count': dic['count'],'error':error,'terror':terror}
+        key_func = lambda x: x['distance']
+        sorted_temp = sorted(temp, key=key_func)
+
+    d = {'c':c,'c1':c1,'count1':count1,'car1':car1,'car':car,'order':sorted_temp,'new': dic['new'], 'count': dic['count'],'error':error,'terror':terror}
     return render(request,'search_cities.html',d)
 
 def search_services(request):

@@ -20,6 +20,8 @@ class Customer(models.Model):
     contact = models.CharField(max_length=100, null=True)
     address = models.CharField(max_length=100, null=True)
     image = models.FileField(null=True)
+    latitude = models.DecimalField(decimal_places=8, max_digits=11, default=0.0)
+    longitude = models.DecimalField(decimal_places=8, max_digits=11, default=0.0)
 
     def __str__(self):
         return self.user.first_name
@@ -37,6 +39,8 @@ class Service_Man(models.Model):
     experience = models.CharField(max_length=100, null=True)
     service_charge=models.BigIntegerField(default=500)
     image = models.FileField(null=True)
+    latitude = models.DecimalField(decimal_places=8, max_digits=11, default=0.0)
+    longitude = models.DecimalField(decimal_places=8, max_digits=11, default=0.0)
 
     def __str__(self):
         return self.user.first_name
