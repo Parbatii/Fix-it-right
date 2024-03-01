@@ -660,6 +660,7 @@ def search_cities(request):
     car1 = Service_Category.objects.all()
     c=""
     c1=""
+    sorted_final=[]
     if request.method=="POST":
         c1 = request.POST['cat']
         ser1 = Service_Category.objects.get(category=c1)
@@ -676,8 +677,9 @@ def search_cities(request):
         terror = True
         key_func = lambda x: x['distance']
         sorted_temp = sorted(temp, key=key_func)
+        sorted_final = sorted_temp
 
-    d = {'c':c,'c1':c1,'count1':count1,'car1':car1,'car':car,'order':sorted_temp,'new': dic['new'], 'count': dic['count'],'error':error,'terror':terror}
+    d = {'c':c,'c1':c1,'count1':count1,'car1':car1,'car':car,'order':sorted_final,'new': dic['new'], 'count': dic['count'],'error':error,'terror':terror}
     return render(request,'search_cities.html',d)
 
 def search_services(request):
