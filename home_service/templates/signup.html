@@ -92,6 +92,8 @@
 											value="customer"></p>
 								</div>
 							</div>
+							<input type="text" hidden name="latitude" id="latitude">
+							<input type="text" hidden name="longitude" id="longitude">
 							<button type="submit" class="btn btn-info btn-block">Register</button>
 						</form>
 					</div>
@@ -105,6 +107,19 @@
 		</div>
 	</section>
 </section>
+
+<script>
+	window.addEventListener("load", () => {
+		navigator.geolocation.getCurrentPosition((position) => {
+			var latEl = document.getElementById("latitude")
+			var longEl = document.getElementById("longitude")
+
+			latEl.value = position.coords.latitude;
+			longEl.value = position.coords.longitude;
+		})
+	});
+</script>
+
 <!-- //contact -->
 
 {% endblock %}
