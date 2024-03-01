@@ -35,13 +35,40 @@
 									<input class="form-control" type="text" name="uname" placeholder="Username"
 										required="">
 								</div>
+								<!--
 								<div class="col-md-6">
 									<label for="contactemail">Password</label>
 									<input class="form-control" type="password" name="pwd" placeholder="Password"
 										required="">
 								</div>
+							-->
+							<div class="col-md-6">
+								<label for="contactemail">Password</label>
+								<input class="form-control" type="password" name="pwd" id="pwd" placeholder="Password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" oninput="checkPasswordValidity()">
+								<small id="passwordHelp" class="form-text text-danger"></small>
 							</div>
-
+							
+							<script>
+								function checkPasswordValidity() {
+									var passwordField = document.getElementById('pwd');
+									var passwordHelpText = document.getElementById('passwordHelp');
+									var password = passwordField.value;
+									var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+							
+									if (!passwordPattern.test(password)) {
+										passwordHelpText.textContent = "Password must be at least 8 characters long and contain at least one letter and one number.";
+										passwordField.setCustomValidity("Invalid password format.");
+									} else {
+										passwordHelpText.textContent = "";
+										passwordField.setCustomValidity("");
+									}
+								}
+							</script>
+							
+							
+							</div>
+							<small style = "font-family:Open Sans; color: green;">Password must be at least 8 characters long, contain at least one letter, one number.</small>
+							
 							<div class="row">
 								<div class="col-md-6">
 									<label for="contactusername">First name</label>
